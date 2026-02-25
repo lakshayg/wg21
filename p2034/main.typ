@@ -4,7 +4,7 @@
 #let font-mono  = "Monaco"
 
 #set heading(numbering: "1.1.")
-#set text(size: 10pt, font: font-serif)
+#set text(size: 10pt, font: font-serif, hyphenate: false)
 #set par(justify: true)
 #set page("us-letter", margin: 0.75in)
 
@@ -17,6 +17,9 @@
 #set quote(block: true)
 #show quote: set pad(x: 2em)
 #show quote: set block(above: 1em)
+
+// prevent linebreak in the middle of grammar terms
+#show emph: it => box(it)
 
 #set highlight(top-edge: 8.5pt, bottom-edge: -2pt)
 #set underline(stroke: (paint: black, thickness: 0.5pt), offset: 1.5pt)
