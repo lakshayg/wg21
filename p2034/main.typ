@@ -74,6 +74,29 @@ typically be `const` qualified. --- _end note_\]
 ]
 
 #nobreak[
+Add a new paragraph under #underline[expr.prim.id.unqual] (7.5.5.2) paragraph 4.
+The diff below shows the differences from paragraph 4.
+#quote[
+If
+- the _unqualified-id_ appears in a _lambda-expression_ at program point P,
+- the entity is a local entity or a variable declared by an _init-capture_,
+- naming the entity within the _compound-statement_ of the innermost enclosing
+  _lambda-expression_ of P, but not in an unevaluated operand, would refer to an
+  entity captured by #replace[copy][reference] in #replace[some][all]
+  intervening _lambda-expression_\s, and
+- P is in the function parameter scope, but not the
+  _parameter-declaration-clause_, of the innermost such _lambda-expression_ _E_,
+
+then the type of the expression is the type #replace[of a class member access
+expression naming the non-static data member that would be declared for such a
+capture in the object parameter of the function call operator of _E_.][the
+entity; with a top-level const-qualifier if _E_ or any of the intervening
+_lambda-expression_\s capture the entity by const reference
+(expr.prim.lambda.capture).]
+]
+]
+
+#nobreak[
 Change in #underline[expr.prim.lambda.general] (7.5.6.1)
 #quote[#grammar[
 lambda-specifier:  \ #tab
@@ -256,7 +279,6 @@ the captured reference is bound and not to the captured reference.
 id-expression is const-qualified.]
 ]
 ]
-*TODO: What happens when non-reference types are captured by reference?*
 
 #nobreak[
 Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 14
@@ -272,8 +294,6 @@ transformed as follows:
 - If `m1` captures the entity by reference, `m2` captures the same entity
   captured by `m1`.
 ]
-*TODO: What does the standard say about _id-expression_ s of entities captured
-by reference outside the context of nested lambdas?*
 ]
 
 // vim:cc=81:tw=80
