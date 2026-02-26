@@ -87,7 +87,7 @@ If
 - P is in the function parameter scope, but not the
   _parameter-declaration-clause_, of the innermost such _lambda-expression_ _E_,
 
-then the type of the expression is the type #replace[of a class member access
+then the type of the expression is the type of #replace[a class member access
 expression naming the non-static data member that would be declared for such a
 capture in the object parameter of the function call operator of _E_.][the
 entity; with a top-level const-qualifier if _E_ or any of the intervening
@@ -146,7 +146,7 @@ The function call operator or any given operator template specialization is a
 constexpr function if either the corresponding _lambda-expression_'s
 _parameter-declaration-clause_ is followed by `constexpr` or #consteval, or it
 is constexpr-suitable.
-It is an immediate fuunction if the corresponding _lambda-expression_'s
+It is an immediate function if the corresponding _lambda-expression_'s
 _parameter-declaration-clause_ is followed by #consteval.
 
 #ins[\[_Note_: The `const` _lambda-specifier_ has no additional effect; the
@@ -234,8 +234,8 @@ An entity is _captured by copy_ if
   #replace[or][,] `&` ...#sub[_opt_] _identifier initializer_
   #ins[or `const &` ...#sub[_opt_] _identifier initializer_].
 
-#ins[An entity capured by copy is said to be _captured mutably_ if the _capture_
-begins with the `mutable` keyword.]
+#ins[An entity captured by copy is said to be _captured mutably_ if the
+_capture_ begins with the `mutable` keyword.]
 
 For each entity captured by copy, an unnamed non-static data member is declared
 in the closure type.
@@ -260,9 +260,9 @@ Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 12
 #quote[
 An entity is _captured by reference_ if it is implicitly or explicitly captured
 but not captured by copy.
-#ins[An entity is _captured by const reference_ if it is captured by reference
-and either it is explicitly captured with a `const &` capture, or it is
-implicitly captured and the _capture-default_ is `const &`.]
+#ins[An entity captured by reference is _captured by const reference_ if it is
+either explicitly captured with a `const &` capture, or it is implicitly
+captured and the _capture-default_ is `const &`.]
 It is unspecified whether additional unnamed non-static data members are
 declared in the closure type for entities captured by reference.
 If declared, such non-static data members shall be of literal type.
