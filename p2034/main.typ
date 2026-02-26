@@ -59,40 +59,27 @@ If
 - the entity is a local entity or a variable declared by an _init-capture_,
 - naming the entity within the _compound-statement_ of the innermost enclosing
   _lambda-expression_ of P, but not in an unevaluated operand, would refer to an
-  entity captured by copy in some intervening _lambda-expression_, and
+  entity captured #del[by copy] in some intervening _lambda-expression_, and
 - P is in the function parameter scope, but not the
   _parameter-declaration-clause_, of the innermost such _lambda-expression_ _E_,
 
-then the type of the expression is the type of a class member access expression
-naming the non-static data member that would be declared for such a capture in
-the object parameter of the function call operator of _E_.
+then the type of the expression is #replace[the type of a class member access
+expression naming the non-static data member that would be declared for such a
+capture in the object parameter of the function call operator of _E_.][:
+- the type of a class member access expression naming the non-static data member
+  that would be declared for such a capture in the object parameter of the
+  function call operator of _E_ if some intervening _lambda-expression_ captures
+  the entity by copy,
+- the type of the entity if all the intervening _lambda-expression_\s capture
+  the entity by non-const reference, or
+- the const qualified type of the entity if all intervening
+  _lambda-expression_\s capture the entity by reference, and at least one
+  captures the entity by const reference.
+]
 
 \[_Note 3:_ If _E_ is not declared `mutable` #ins[and the entity is not captured
 mutably (expr.prim.lambda.capture) by _E_], the type of such an identifier will
 typically be `const` qualified. --- _end note_\]
-]
-]
-
-#nobreak[
-Add a new paragraph under #underline[expr.prim.id.unqual] (7.5.5.2) paragraph 4.
-The diff below shows the differences from paragraph 4.
-#quote[
-If
-- the _unqualified-id_ appears in a _lambda-expression_ at program point P,
-- the entity is a local entity or a variable declared by an _init-capture_,
-- naming the entity within the _compound-statement_ of the innermost enclosing
-  _lambda-expression_ of P, but not in an unevaluated operand, would refer to an
-  entity captured by #replace[copy][reference] in #replace[some][all]
-  intervening _lambda-expression_\s, and
-- P is in the function parameter scope, but not the
-  _parameter-declaration-clause_, of the innermost such _lambda-expression_ _E_,
-
-then the type of the expression is the type of #replace[a class member access
-expression naming the non-static data member that would be declared for such a
-capture in the object parameter of the function call operator of _E_.][the
-entity; with a top-level const-qualifier if _E_ or any of the intervening
-_lambda-expression_\s capture the entity by const reference
-(expr.prim.lambda.capture).]
 ]
 ]
 
