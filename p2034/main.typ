@@ -179,7 +179,7 @@ to modify the call.
 
 #link("https://wg21.link/P0288")[P0288] (`move_only_function`) was approved by
 LEWG, and a central improvement is that it respects the const modifier on
-function types (ie. `move_only_function<void(int) const>`). This means an
+function types (ie. `move_only_function<void(int) const>`). This means a
 `move_only_function` with a const modifier on its call type will only bind to
 lambdas that are not marked `mutable`.
 
