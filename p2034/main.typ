@@ -238,7 +238,24 @@ for memory- and thread-safety
 
 = Proposal
 
-== Mutable Capture By Value
+We propose a number of enhancements to the lambda syntax that simplify creating
+const-correct lambdas. In addition to const-correctness, these features improve
+the consistency and symmetry -- which the authors believe is a justification in
+its own right.
+
+The proposed enhancements are summarized below in the order of their perceived
+usefulness followed by a more detailed explanation for each of these items.
+
+1. Mutable capture on const call operator
+2. Const capture on mutable call operator
+3. Const capture by reference
+4. Const default capture
+5. Const default capture by reference
+6. Explicitly const call operator
+7. Const capture on const call operator
+8. Mutable capture on mutable call operator
+
+== Feature 1: Mutable Capture on Const Call Operator
 
 Allow
 #link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3610.html")[
@@ -358,14 +375,7 @@ auto delay_invoke_foo(Args... args, State s) {
 }
 ```
 
-= Possible Extensions
-
-Extensions are motivated by use cases, and listed in order of perceived
-usefulness -- however it should be noted that they also introduce increasing
-precision, consistency, and symmetry -- which the authors believe is a
-justification in its own right.
-
-== 1. Const Capture on Mutable Call Operator
+== Feature 2: Const Capture on Mutable Call Operator
 
 If lambda capture initialization can be modified by `mutable` and lambda
 closure call can be modified by `mutable`, then lambda closure calls modified by
@@ -485,7 +495,7 @@ struct B {
 };
 ```
 
-== 2. Const Capture by Reference
+== Feature 3: Const Capture by Reference
 
 Capture by reference is not implicitly `const`, as capture by value is. However
 there are situations where it would be useful to capture by `const` reference,
@@ -533,7 +543,11 @@ X a, b, c;
 X a, b, c;
 ...
 [const &] {
+
+
   // ... const context
+
+
 }();
 ```
   ]
@@ -567,7 +581,15 @@ struct B {
 };
 ```
 
-== 3. Const Call Operator
+== Feature 4: Const Default Capture
+
+TODO
+
+== Feature 5: Const Default Capture by Reference
+
+TODO
+
+== Feature 6: Explicitly Const Call Operator
 
 For symmetry with the call operator of bespoke types, declaring the lambda const
 should not be an error.
@@ -583,7 +605,7 @@ struct C {
 };
 ```
 
-== 4. Const Capture on Const Call Operator
+== Feature 7: Const Capture by Value on Const Call Operator
 
 For symmetry and principle of least surprise, declaring a const capture of a
 const lambda should not be an error.
@@ -592,9 +614,9 @@ const lambda should not be an error.
 auto c = [const x]() {};
 ```
 
-See Const Capture on Mutable Call Operator.
+See Const Capture by Value on Mutable Call Operator.
 
-== 5. Mutable Capture on Mutable Call Operator
+== Feature 8: Mutable Capture on Mutable Call Operator
 
 For symmetry and principle of least surprise, declaring a mutable capture of a
 mutable lambda should not be an error.
@@ -612,7 +634,7 @@ struct C {
 
 == Benefits of Consistency and Symmetry
 
-The core benefits of extensions 3, 4 and 5 is lower cognitive load for
+The core benefits of features 6, 7, and 8 is lower cognitive load for
 programmers learning C++, and principle of least surprise. We can teach why
 lambdas default the way they do, but lambdas should have consistent and
 symmetric vocabulary for teaching how lambdas transform into callable types
@@ -626,12 +648,12 @@ be the opposite, as an exception.
 
 = Concerns
 
-== 1. East v. West Const
+== East v. West Const
 
 In both East or West-const, the const always appears before the identifier. This
 proposal does not change that.
 
-== 2. Pointer to Const v. Const Pointer
+== Pointer to Const v. Const Pointer
 
 Current lambda behavior mandates bitwise const, which is const-pointer (not
 pointer to const). This proposal seeks to continue and not to modify that rule.
@@ -643,7 +665,7 @@ auto c = [const x = ptr]() {
 };
 ```
 
-== 3. Interactions with `this`
+== Interactions with `this`
 
 The keyword `this` is a prvalue expression, and is special cased with regard to
 lambda captures. As such, the meaning of `mutable this` and `const this` doesn’t
@@ -710,7 +732,8 @@ Thanks Patrick McMichael for suggesting the idea. Thanks to Nevin Liber,
 Matt Calabrese for offering important corrections. Thanks to Nevin Liber,
 Davis Herring, Barry Revzin, and Victoria Tsai, for examples and suggestions.
 Thanks to Ville for the exploratory implementation! Thanks to Lakshay Garg for
-becoming the second author.
+becoming the second author. Thanks to Daveed Vandevoorde for providing
+suggestions and feedback on the wording.
 
 #pagebreak()
 
