@@ -59,6 +59,17 @@
 
 = Revision History
 
+=== Changes from R5: #link("https://wiki.isocpp.org/2025-11_Kona:EWGP2034Notes")[EWG Discussion]
+
+- Incorporate extensions into the main proposal.
+- Add discussion of capture defaults to the proposal.
+- Rearranged some sections and updated links.
+- Add wording for:
+  - mutable captures
+  - const-ref captures
+  - const-ref capture-default
+  - const specifier
+
 === Changes from R4: #link("https://wiki.isocpp.org/2025-06_Sofia:NotesEWGP2034")[EWG Discussion]
 
 - Implementation experience.
