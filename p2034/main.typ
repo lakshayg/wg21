@@ -1,9 +1,11 @@
 // Document formatting rules
-#let font-serif = "Palatino"
-#let font-sans  = "IBM Plex Sans"
+#let font-serif = "New Computer Modern"
+#let font-sans  = "Helvetica"
 #let font-mono  = "Monaco"
 
 #set heading(numbering: none)
+#show heading: set block(below: 1.2em)
+
 #set text(size: 10pt, font: font-serif, hyphenate: false)
 #set par(justify: true)
 #set page("us-letter", margin: 0.75in)
@@ -25,6 +27,8 @@
 #set underline(stroke: (paint: black, thickness: 0.5pt), offset: 1.5pt)
 #set strike(stroke: (paint: black, thickness: 0.5pt), offset: -2.5pt)
 
+#set list(marker: [--])
+
 // Custom styles
 #let tab = h(2em)
 #let consteval = text(fill: rgb("#D73948"))[`consteval`]
@@ -32,7 +36,7 @@
 #let del(body) = highlight(fill: rgb("#FFC0CB"), strike(body))
 #let replace(before, after) = del(before) + ins(after)
 #let nobreak(body) = block(breakable: false, body)
-#let grammar(body) = text(font: font-sans, style: "italic", body)
+#let grammar(body) = text(font: font-sans, size: 9.5pt, weight: "light", style: "italic", body)
 
 // Document
 #title[P2034: Partially Mutable Lambda Captures]
@@ -46,6 +50,9 @@
     "Audience", "EWG",
     "Project",  [ISO/IEC JTC1/SC22/WG21 14882: Programming Language -- C++],
 )
+
+// Table header highlight
+#set table(fill: (x, y) => if y == 0 { gray.lighten(40%) })
 
 = Revision History
 
@@ -78,6 +85,8 @@
 - Clarify const as it applies to pointers.
 - Add const-reference use case.
 - Expanded prose.
+
+#pagebreak()
 
 = Polls
 
@@ -114,6 +123,8 @@ _discussing the approach with the maintainer, and coming to_ \
 _the conclusion that it's simply a matter of adjusting the types of the_ \
 _capture members of lambda for const, and the storage-class-specifier_ \
 _for mutable. The implementation effort was a matter of a single afternoon._
+
+#pagebreak()
 
 = Background
 
@@ -163,6 +174,7 @@ and place them in a concurrent queue to be processed elsewhere. Performance is
 often key in such systems, and such operations may want its own local reusable
 scratch memory. Or perhaps an accumulator for hysteresis over multiple calls.
 
+#nobreak[
 ```cpp
 struct MyRealtimeHandler {
   Callback callback_;
@@ -177,6 +189,7 @@ struct MyRealtimeHandler {
 concurrent::queue<move_only_function<void(Timestamp) const> queue;
 queue.push(MyRealtimeHandler{f, s});
 ```
+]
 
 Lambdas in such cases require work-arounds, such as abandoning logical const
 correctness, abandoning ownership, or introducing intermediary
@@ -207,6 +220,7 @@ struct A {
 
 #table(
   columns: (1fr, 1fr),
+  align: bottom,
   [Before], [After],
   [
 ```cpp
@@ -228,7 +242,7 @@ move_only_function<void() const> f =
     // ...
   };
 ```
-  ],[
+  ],nobreak[
 ```cpp
 template <typename T>
 class as_owned_mutable {
@@ -332,6 +346,7 @@ Allowing `const` captures is ergonomic and simple.
 
 #table(
   columns: (1fr, 1fr),
+  align: bottom,
   [Before], [After],
   [
 ```cpp
@@ -642,9 +657,10 @@ Davis Herring, Barry Revzin, and Victoria Tsai, for examples and suggestions.
 Thanks to Ville for the exploratory implementation! Thanks to Lakshay Garg for
 becoming the second author.
 
+#pagebreak()
+
 = Proposed Wording
 
-#set list(marker: [--])
 
 #nobreak[
 Change in #underline[expr.prim.id.unqual] (7.5.5.2) paragraph 4
