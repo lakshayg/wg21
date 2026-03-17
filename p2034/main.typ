@@ -59,29 +59,29 @@
 
 = Revision History
 
-== Changes from R4
+=== Changes from R4: #link("https://wiki.isocpp.org/2025-06_Sofia:NotesEWGP2034")[EWG Discussion]
 
 - Implementation experience.
 
-== Changes from R3
+=== Changes from R3: #link("https://wiki.isocpp.org/2024-03_Tokyo:NotesEWGIP2034R2")[EWG-I Discussion]
 
 - Meta-motivation: safety and security -- const should be easier to get right
   and harder to get wrong.
 - Cleaned up some examples.
 
-== Changes from R2
+=== Changes from R2
 
 - Update author email addresses.
 - Rename `any_invocable` to `move_only_function`.
 
-== Changes from R1
+=== Changes from R1
 
 - Add discussion of const captures on move construction and assignment.
 - Add vocabulary type `as_mutable`.
 - Add alternative implementation strategy for const members.
 - Selective move feature in top section.
 
-== Changes from R0: #link("http://wiki.edg.com/bin/view/Wg21prague/P2034R0SG17")[Concerns from EWG-I]
+=== Changes from R0: #link("https://wiki.isocpp.org/2020-02_Prague:P2034R0SG17")[Concerns from EWG-I]
 
 - Interactions with `this` pointer.
 - Interactions with init-capture packs.
@@ -93,8 +93,25 @@
 
 = Polls
 
-_EWG encourages more work in the direction of Partially Mutable Lambda
-Captures._
+== 2025-11 Kona, R5
+
+#nobreak[
+
+We \[EWG\] encourage further work on this paper towards C++29.
+
+#table(
+  columns: 5,
+  [SF],[F],[N],[A],[SA],
+  [21],[27],[5],[0],[0],
+)
+
+*Strong Consensus*
+]
+
+== 2025-06 Sofia, R4
+
+#nobreak[
+EWG encourages more work in the direction of Partially Mutable Lambda Captures.
 
 #table(
   columns: 5,
@@ -103,9 +120,11 @@ Captures._
 )
 
 *Consensus*
+]
 
-_EWG encourages more work in the direction of Partially Mutable Lambda Captures,
-including extensions._
+#nobreak[
+EWG encourages more work in the direction of Partially Mutable Lambda Captures,
+including extensions.
 
 #table(
   columns: 5,
@@ -114,18 +133,35 @@ including extensions._
 )
 
 *Stronger consensus*
+]
 
-= Implementation Report
+== 2024-03 Tokyo, R2
 
-Ville Voutilainen has implemented extensions in GCC on Godbolt:
-#link("https://godbolt.org/z/9fcoYeMMf") with regression tests,
-and gave the following report.
+#nobreak[
+EWGI believes P2034R3 should include a `const` qualifier for lambda captures.
 
-_In general, the implementation was very straightforward, after_ \
-_discussing the approach with the maintainer, and coming to_ \
-_the conclusion that it's simply a matter of adjusting the types of the_ \
-_capture members of lambda for const, and the storage-class-specifier_ \
-_for mutable. The implementation effort was a matter of a single afternoon._
+#table(
+  columns: 5,
+  [SF],[F],[N],[A],[SA],
+  [2],[4],[4],[1],[0],
+)
+
+*Barely consensus*
+
+Comment: motivation could be better.
+]
+
+#nobreak[
+EWGI believes P2034R3 is sufficiently well developed, EWGI forwards it to EWG.
+
+#table(
+  columns: 5,
+  [SF],[F],[N],[A],[SA],
+  [3],[7],[0],[0],[0],
+)
+
+*Consenus*
+]
 
 #pagebreak()
 
@@ -651,6 +687,22 @@ inconsistent if logically const.
 The meaning of `mutable *this` and `const *this` is much clearer, but for the
 sake of consistency when teaching "`this` is special", we recommend dis-allowing
 this form as well.
+
+== Complexity of Implementation
+
+Ville Voutilainen implemented the proposal along with the extensions proposed in
+P2034R5 in GCC on #link("https://godbolt.org/z/9fcoYeMMf")[Compiler Explorer]
+with regression tests, and gave the following report.
+
+#block(stroke: (left: 2pt + gray))[
+#quote[
+In general, the implementation was very straightforward, after discussing the
+approach with the maintainer, and coming to the conclusion that it's simply a
+matter of adjusting the types of the capture members of lambda for const, and
+the storage-class-specifier for mutable. The implementation effort was a matter
+of a single afternoon.
+]
+]
 
 = Thanks
 
