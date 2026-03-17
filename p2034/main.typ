@@ -510,8 +510,7 @@ struct B {
 
 Capture by reference is not implicitly `const`, as capture by value is. However
 there are situations where it would be useful to capture by `const` reference,
-such as when a read-only object is too large to copy -- or as a novel means
-to create a read-only code block.
+such as when a read-only object is too large to copy.
 
 === Value
 
@@ -536,30 +535,6 @@ move_only_function<void() const> f =
   [s, const& huge] mutable {
     // ...
   };
-```
-  ],[
-```cpp
-X a, b, c;
-...
-{
-  // manual wrapping
-  auto& c_a = std::as_const(a);
-  auto& c_b = std::as_const(b);
-  auto& c_c = std::as_const(c);
-  // ... enter const context
-}
-```
-  ],[
-```cpp
-X a, b, c;
-...
-[const &] {
-
-
-  // ... const context
-
-
-}();
 ```
   ]
 )
@@ -594,11 +569,61 @@ struct B {
 
 == Feature 4: Const Default Capture
 
-TODO
+When capturing by value with `=`, the constness of the captured entities
+depends on the declaration of the captured entity and the presence of the
+mutable specifier. There is no way to express the intent of const capture
+for capture defaults.
+
+```cpp
+int x = 42;
+auto b = [const =] () {
+    // x is captured as-if it was const
+    x = 1; // error
+}
+```
+
+=== Value
+
+Declaring `[const =]` makes the read-only intent clear even on a mutable lambda,
+without requiring each capture to be individually annotated const. It is the
+default-capture analogue of "Const Capture on Mutable Call Operator".
 
 == Feature 5: Const Default Capture by Reference
 
-TODO
+Similarly to "Const Default Capture", the constness of entities captured by
+reference depends on the declaration of the entity. `[const &]` as a
+capture-default expresses the read-only intent clearly. This can also be used
+as a novel means of creating read-only code blocks.
+
+#table(
+  columns: (1fr, 1fr),
+  [Before], [After],
+  [
+```cpp
+X a, b, c;
+...
+{
+  // manual wrapping
+  auto& c_a = std::as_const(a);
+  auto& c_b = std::as_const(b);
+  auto& c_c = std::as_const(c);
+  // ... enter const context
+}
+```
+  ],[
+```cpp
+X a, b, c;
+...
+[const &] {
+
+
+  // ... const context
+
+
+}();
+```
+  ]
+)
 
 == Feature 6: Explicitly Const Call Operator
 
@@ -625,7 +650,7 @@ const lambda should not be an error.
 auto c = [const x]() {};
 ```
 
-See Const Capture by Value on Mutable Call Operator.
+See "Const Capture by Value on Mutable Call Operator".
 
 == Feature 8: Mutable Capture on Mutable Call Operator
 
