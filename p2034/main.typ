@@ -51,6 +51,9 @@
     "Project",  [ISO/IEC JTC1/SC22/WG21 14882: Programming Language -- C++],
 )
 
+#outline(depth: 2)
+#pagebreak()
+
 // Table header highlight
 #set table(fill: (x, y) => if y == 0 { gray.lighten(40%) })
 
