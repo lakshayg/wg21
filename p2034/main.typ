@@ -716,9 +716,10 @@ becoming the second author.
 
 = Proposed Wording
 
+== expr.prim.id.unqual
 
 #nobreak[
-Change in #underline[expr.prim.id.unqual] (7.5.5.2) paragraph 4
+=== Change in #underline[expr.prim.id.unqual] (7.5.5.2) paragraph 4
 #quote[
 If
 - the _unqualified-id_ appears in a _lambda-expression_ at program point P,
@@ -749,8 +750,10 @@ typically be `const` qualified. --- _end note_\]
 ]
 ]
 
+== expr.prim.lambda.general
+
 #nobreak[
-Change in #underline[expr.prim.lambda.general] (7.5.6.1)
+=== Change in #underline[expr.prim.lambda.general] (7.5.6.1)
 #quote[#grammar[
 lambda-specifier:  \ #tab
     consteval      \ #tab
@@ -762,7 +765,7 @@ lambda-specifier:  \ #tab
 ]
 
 #nobreak[
-Change in #underline[expr.prim.lambda.general] (7.5.6.1) paragraph 4
+=== Change in #underline[expr.prim.lambda.general] (7.5.6.1) paragraph 4
 #quote[
 A _lambda-specifier-seq_ shall contain at most one of each _lambda-specifier_
 and shall not contain both `constexpr` and #consteval.
@@ -776,8 +779,10 @@ _lambda-capture_.
 ]
 ]
 
+== expr.prim.lambda.closure
+
 #nobreak[
-Add a note to #underline[expr.prim.lambda.general] (7.5.6.2) paragraph 7
+=== Add a note to #underline[expr.prim.lambda.closure] (7.5.6.2) paragraph 7
 #quote[
 The function call operator or operator template is a static member function of
 static member function template if the _lambda-expression_'s
@@ -808,8 +813,10 @@ are not specified, regardless of whether `const` is present. _-- end note_\]]
 ]
 ]
 
+== expr.prim.lambda.capture
+
 #nobreak[
-Change in #underline[expr.prim.lambda.capture] (7.5.6.3)
+=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3)
 #quote[#grammar[
 lambda-capture:                    \ #tab
 	capture-default                \ #tab
@@ -846,7 +853,7 @@ init-capture:                                           \ #tab
 ]
 
 #nobreak[
-Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 2
+=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 2
 #quote[
 If a _lambda-capture_ includes a _capture-default_ that is
 #replace[`&`][not `=`], no #del[identifier in a] _simple-capture_ of that
@@ -860,7 +867,7 @@ _simple-capture_ of that _lambda-capture_ shall be of the form
 ]
 
 #nobreak[
-Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 6
+=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 6
 #quote[
 An _init-capture_ inhabits the lambda scope of the _lambda-expression_.
 An _init-capture_ without ellipsis behaves as if it declares and explicitly
@@ -877,7 +884,7 @@ captures a variables of the form "`auto` _init-capture_ `;`"
 ]
 
 #nobreak[
-Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 10
+=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 10
 #quote[
 An entity is _captured by copy_ if
 - it is implicitly captured, the _capture-default_ is `=`, and the captured
@@ -909,7 +916,7 @@ A member of an anonymous union shall not be captured by copy.
 ]
 
 #nobreak[
-Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 12
+=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 12
 #quote[
 An entity is _captured by reference_ if it is implicitly or explicitly captured
 but not captured by copy.
@@ -923,7 +930,7 @@ If declared, such non-static data members shall be of literal type.
 ]
 
 #nobreak[
-Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 13
+=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 13
 #quote[
 An _id-expression_ within the _compound-statement_ of a _lambda-expression_ that
 is an odr-use of a reference captured by reference refers to the entity to which
@@ -934,7 +941,7 @@ id-expression is const-qualified.]
 ]
 
 #nobreak[
-Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 14
+=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 14
 #quote[
 If a _lambda-expression_ `m2` captures an entity and that entity is captured by
 an immediately enclosing _lambda-expression_ `m1`, then `m2`'s capture is
