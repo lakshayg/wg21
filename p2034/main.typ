@@ -749,8 +749,7 @@ this form as well.
 == Complexity of Implementation
 
 Ville Voutilainen implemented the proposal along with the extensions proposed in
-P2034R5 in GCC on #link("https://godbolt.org/z/9fcoYeMMf")[Compiler Explorer]
-with regression tests, and gave the following report.
+P2034R5 in GCC with regression tests, and gave the following report.
 
 #block(stroke: (left: 2pt + gray))[
 #quote[
@@ -761,6 +760,10 @@ the storage-class-specifier for mutable. The implementation effort was a matter
 of a single afternoon.
 ]
 ]
+
+The implementation is available on
+#link("https://github.com/villevoutilainen/gcc/tree/lambda-p2034")[GitHub] and
+can be tested on #link("https://godbolt.org/z/9fcoYeMMf")[Compiler Explorer].
 
 = Thanks
 
