@@ -10,7 +10,7 @@
 #set par(justify: true)
 #set page("us-letter", margin: 0.75in)
 
-#set raw(lang: "cpp")
+#set raw(lang: "txt")
 #show raw: set text(font: font-mono)
 
 #show link: set text(fill: rgb("#0000EE"))
@@ -31,7 +31,6 @@
 
 // Custom styles
 #let tab = h(2em)
-#let consteval = text(fill: rgb("#D73948"))[`consteval`]
 #let ins(body) = highlight(fill: rgb("#90EE90"), underline(body))
 #let del(body) = highlight(fill: rgb("#FFC0CB"), strike(body))
 #let replace(before, after) = del(before) + ins(after)
@@ -818,11 +817,11 @@ typically be `const` qualified. --- _end note_\]
 === Change in #underline[expr.prim.lambda.general] (7.5.6.1)
 #quote[#grammar[
 lambda-specifier:  \ #tab
-    consteval      \ #tab
-    constexpr      \ #tab
-    #ins[const]    \ #tab
-    mutable        \ #tab
-    static
+	`consteval`      \ #tab
+	`constexpr`      \ #tab
+	#ins[`const`]    \ #tab
+	`mutable`        \ #tab
+	`static`
 ]]
 ]
 
@@ -830,7 +829,7 @@ lambda-specifier:  \ #tab
 === Change in #underline[expr.prim.lambda.general] (7.5.6.1) paragraph 4
 #quote[
 A _lambda-specifier-seq_ shall contain at most one of each _lambda-specifier_
-and shall not contain both `constexpr` and #consteval.
+and shall not contain both `constexpr` and `consteval`.
 If the _lambda-declarator_ contains an explicit object parameter, then no
 _lambda-specifier_ in the _lambda-specifier-seq_ shall be #ins[`const`,]
 `mutable`, or `static`.
@@ -864,10 +863,10 @@ _lambda-declarator_ appertains to the corresponding function call operator or
 operator template.
 The function call operator or any given operator template specialization is a
 constexpr function if either the corresponding _lambda-expression_'s
-_parameter-declaration-clause_ is followed by `constexpr` or #consteval, or it
+_parameter-declaration-clause_ is followed by `constexpr` or `consteval`, or it
 is constexpr-suitable.
 It is an immediate function if the corresponding _lambda-expression_'s
-_parameter-declaration-clause_ is followed by #consteval.
+_parameter-declaration-clause_ is followed by `consteval`.
 
 #ins[\[_Note_: The `const` _lambda-specifier_ has no additional effect; the
 function call operator is declared `const` if and only if `mutable` and `static`
@@ -886,7 +885,7 @@ lambda-capture:                    \ #tab
 	capture-default, capture-list
 
 capture-default:                   \ #tab
-	#ins[const#sub[opt]] &   \ #tab
+	#ins[`const`#sub[opt]] &   \ #tab
 	\=
 
 capture-list:                      \ #tab
@@ -898,14 +897,14 @@ capture:                           \ #tab
 	init-capture
 
 simple-capture:                            \ #tab
-	#ins[mutable#sub[opt]] identifier ...#sub[opt] \ #tab
-	#ins[const#sub[opt]] & identifier ...#sub[opt] \ #tab
+	#ins[`mutable`#sub[opt]] identifier ...#sub[opt] \ #tab
+	#ins[`const`#sub[opt]] & identifier ...#sub[opt] \ #tab
 	this                                   \ #tab
 	\*this
 
 init-capture:                                           \ #tab
-	#ins[mutable#sub[opt]] ...#sub[opt] identifier initializer \ #tab
-	#ins[const#sub[opt]] & ...#sub[opt] identifier initializer
+	#ins[`mutable`#sub[opt]] ...#sub[opt] identifier initializer \ #tab
+	#ins[`const`#sub[opt]] & ...#sub[opt] identifier initializer
 ]]
 ]
 
