@@ -886,8 +886,7 @@ lambda-capture:                    \ #tab
 	capture-default, capture-list
 
 capture-default:                   \ #tab
-	&                              \ #tab
-	#ins[const &]                  \ #tab
+	#ins[const#sub[opt]] &   \ #tab
 	\=
 
 capture-list:                      \ #tab
@@ -899,18 +898,14 @@ capture:                           \ #tab
 	init-capture
 
 simple-capture:                            \ #tab
-	identifier ...#sub[opt]                \ #tab
-	#ins[mutable identifier ...#sub[opt]]  \ #tab
-	& identifier ...#sub[opt]              \ #tab
-	#ins[const & identifier ...#sub[opt]]  \ #tab
+	#ins[mutable#sub[opt]] identifier ...#sub[opt] \ #tab
+	#ins[const#sub[opt]] & identifier ...#sub[opt] \ #tab
 	this                                   \ #tab
 	\*this
 
 init-capture:                                           \ #tab
-	...#sub[opt] identifier initializer                 \ #tab
-	#ins[mutable ...#sub[opt] identifier initializer]   \ #tab
-	& ...#sub[opt] identifier initializer               \ #tab
-	#ins[const & ...#sub[opt] identifier initializer]
+	#ins[mutable#sub[opt]] ...#sub[opt] identifier initializer \ #tab
+	#ins[const#sub[opt]] & ...#sub[opt] identifier initializer
 ]]
 ]
 
