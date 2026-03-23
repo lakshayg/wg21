@@ -514,9 +514,7 @@ such as when a read-only object is too large to copy.
 === Value
 
 The same effect can be achieved using `std::cref` and `std::as_const` -- but
-must be manually applied to each captured variable -- unlike the capture-all in
-the second example below. This represents a chance to miss a variable and lose
-the protection of `const`.
+this syntax is intuitive, concise and improves symmetry of this proposal.
 
 #table(
   columns: (1fr, 1fr),
@@ -591,8 +589,10 @@ default-capture analogue of "Const Capture on Mutable Call Operator".
 
 Similarly to "Const Default Capture", the constness of entities captured by
 reference depends on the declaration of the entity. `[const &]` as a
-capture-default expresses the read-only intent clearly. This can also be used
-as a novel means of creating read-only code blocks.
+capture-default expresses the read-only intent clearly. Applying `std::cref` or
+`std::as_const` to each captured entity represents a chance to miss a variable
+and lose the protection of `const`. The capture-all does not post this issue.
+This can also be used as a novel means of creating read-only code blocks.
 
 #table(
   columns: (1fr, 1fr),
