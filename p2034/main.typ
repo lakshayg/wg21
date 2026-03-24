@@ -43,7 +43,7 @@
     columns: (6em, 1fr),
     inset: (left: 0em, top: 0.2em),
     stroke: none,
-    "Document", "P2034R6",
+    "Document", "P2034R7",
     "Authors",  [Ryan McDougall ```txt <mcdougall.ryan@gmail.com>```],
     "",         [Lakshay Garg ```txt <lakshayg.xyz@gmail.com>```],
     "Audience", "EWG",
@@ -57,6 +57,8 @@
 #set table(fill: (x, y) => if y == 0 { gray.lighten(40%) })
 
 = Revision History
+
+=== Changes from R6: #link("https://wiki.isocpp.org/2026-03_Croydon:EvolutionWorkingGroup:P2034R6")[EWG Discussion]
 
 === Changes from R5: #link("https://wiki.isocpp.org/2025-11_Kona:EWGP2034Notes")[EWG Discussion]
 
@@ -103,74 +105,102 @@
 
 = Polls
 
+== 2026-03 Croydon, R6
+
+#nobreak[
+
+P2034R6 should include default mutable captures: _Strong Consensus in favor_
+
+#table(
+  columns: 5,
+  [SF],[F],[N],[A],[SA],
+  [3],[28],[4],[0],[0],
+)
+]
+
+#nobreak[
+
+P2034R6 should explore making const-capture equivalent to a const member:
+_Strong Consensus in favor_
+
+#table(
+  columns: 5,
+  [SF],[F],[N],[A],[SA],
+  [8],[25],[1],[2],[0],
+)
+]
+
+#nobreak[
+
+Encourage more work in the direction of P2034R6: _Strong Consensus in favor_
+
+#table(
+  columns: 5,
+  [SF],[F],[N],[A],[SA],
+  [14],[26],[2],[0],[0],
+)
+]
+
 == 2025-11 Kona, R5
 
 #nobreak[
 
-We \[EWG\] encourage further work on this paper towards C++29.
+We \[EWG\] encourage further work on this paper towards C++29:
+_Strong Consensus_
 
 #table(
   columns: 5,
   [SF],[F],[N],[A],[SA],
   [21],[27],[5],[0],[0],
 )
-
-*Strong Consensus*
 ]
 
 == 2025-06 Sofia, R4
 
 #nobreak[
-EWG encourages more work in the direction of Partially Mutable Lambda Captures.
+EWG encourages more work in the direction of Partially Mutable Lambda Captures:
+_Consensus_
 
 #table(
   columns: 5,
   [SF],[F],[N],[A],[SA],
   [1],[10],[4],[2],[1],
 )
-
-*Consensus*
 ]
 
 #nobreak[
 EWG encourages more work in the direction of Partially Mutable Lambda Captures,
-including extensions.
+including extensions: _Stronger consensus_
 
 #table(
   columns: 5,
   [SF],[F],[N],[A],[SA],
   [2],[15],[3],[1],[0],
 )
-
-*Stronger consensus*
 ]
 
 == 2024-03 Tokyo, R2
 
 #nobreak[
-EWGI believes P2034R3 should include a `const` qualifier for lambda captures.
+EWGI believes P2034R3 should include a `const` qualifier for lambda captures:
+_Barely consensus_ (Comment: motivation could be better)
 
 #table(
   columns: 5,
   [SF],[F],[N],[A],[SA],
   [2],[4],[4],[1],[0],
 )
-
-*Barely consensus*
-
-Comment: motivation could be better.
 ]
 
 #nobreak[
-EWGI believes P2034R3 is sufficiently well developed, EWGI forwards it to EWG.
+EWGI believes P2034R3 is sufficiently well developed, EWGI forwards it to EWG:
+_Consenus_
 
 #table(
   columns: 5,
   [SF],[F],[N],[A],[SA],
   [3],[7],[0],[0],[0],
 )
-
-*Consenus*
 ]
 
 #pagebreak()
