@@ -60,6 +60,8 @@
 
 === Changes from R6: #link("https://wiki.isocpp.org/2026-03_Croydon:EvolutionWorkingGroup:P2034R6")[EWG Discussion]
 
+- Fix code examples
+
 === Changes from R5: #link("https://wiki.isocpp.org/2025-11_Kona:EWGP2034Notes")[EWG Discussion]
 
 - Incorporate extensions into the main proposal.
@@ -457,7 +459,7 @@ move_only_function<void()> f =
 ```
   ],[
 ```cpp
-move_only_function<void() const> f =
+move_only_function<void()> f =
   [s, const b] mutable {
     // ...
   };
@@ -468,12 +470,12 @@ move_only_function<void() const> f =
 // loss of const correctness
 move_only_function<void()> f =
   [s, b]() mutable {
-    // ...
+    // b can be mutated
   };
 ```
   ],[
 ```cpp
-move_only_function<void() const> f =
+move_only_function<void()> f =
   [s, const b] mutable {
     // ...
   };
@@ -489,7 +491,7 @@ move_only_function<void()> f =
 ```
   ],[
 ```cpp
-move_only_function<void() const> f =
+move_only_function<void()> f =
   [s, const b] mutable {
     // ...
   };
@@ -551,14 +553,14 @@ this syntax is intuitive, concise and improves symmetry of this proposal.
   [Before], [After],
   [
 ```cpp
-move_only_function<void() const> f =
+move_only_function<void()> f =
   [s, huge = std::cref(huge)] mutable {
     // ...
   };
 ```
   ],[
 ```cpp
-move_only_function<void() const> f =
+move_only_function<void()> f =
   [s, const& huge] mutable {
     // ...
   };
