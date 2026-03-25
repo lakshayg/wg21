@@ -219,11 +219,11 @@ left captures entirely const.
 N2658] salvaged mutable for _all_ captures by allowing the `mutable` keyword
 to modify the call.
 
-#link("https://wg21.link/P0288")[P0288] (`move_only_function`) was approved by
-LEWG, and a central improvement is that it respects the const modifier on
-function types (ie. `move_only_function<void(int) const>`). This means a
-`move_only_function` with a const modifier on its call type will only bind to
-lambdas that are not marked `mutable`.
+`move_only_function` was accepted into the C++23 standard, and a central
+improvement is that it respects the `const` modifier on function types (ie.
+`move_only_function<void(int) const>`). This means a `move_only_function` with a
+`const` modifier on its call type will only bind to lambdas that are not marked
+`mutable`.
 
 A type that is
 #link("https://isocpp.org/wiki/faq/const-correctness#mutable-data-members")[
