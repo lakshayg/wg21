@@ -234,9 +234,9 @@ with logically const lambdas.
 
 = Meta-Motivation
 
-The proposal and most extensions would allow programmers to *apply `const` with
-simplicity and precision* to lambda captures -- improving applicability of const
-in cases where programmers would otherwise:
+The proposal would allow programmers to *apply `const` with simplicity and
+precision* to lambda captures -- improving applicability of const in cases
+where programmers would otherwise:
 
 1. Declare the lambda blanket mutable.
 2. Declare captures by const {non-}propagating wrapper.
