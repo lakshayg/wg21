@@ -809,6 +809,10 @@ suggestions and feedback on the wording.
 
 = Proposed Wording
 
+The proposed changes are based on
+#link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5008.pdf")[
+N5008].
+
 == expr.prim.id.unqual
 
 #nobreak[
