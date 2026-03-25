@@ -515,7 +515,7 @@ struct B {
 
 A `const` member would make the lambda closure assignment operators deleted, but
 lambda closures with captures
-#link("https://eel.is/c++draft/expr#prim.lambda.closure-15")[already delete the
+#link("https://eel.is/c++draft/expr.prim.lambda.closure#17")[already delete the
 copy assignment operator].
 
 A `const` member would also cause the move constructor to be implemented via
