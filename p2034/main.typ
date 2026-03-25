@@ -196,7 +196,7 @@ _Barely consensus_ (Comment: motivation could be better)
 
 #nobreak[
 EWGI believes P2034R3 is sufficiently well developed, EWGI forwards it to EWG:
-_Consenus_
+_Consensus_
 
 #table(
   columns: 5,
@@ -250,7 +250,7 @@ captures smaller and thus easier to read and reason about.
 = Motivation
 
 Type erased callables like `std::move_only_function` are the backbone of most
-asynchronous systems. Users of such systems close their operations in lambdas
+asynchronous systems. Users of such systems enclose their operations in lambdas
 and place them in a concurrent queue to be processed elsewhere. Performance is
 often key in such systems, and such operations may want its own local reusable
 scratch memory. Or perhaps an accumulator for hysteresis over multiple calls.
@@ -272,7 +272,7 @@ queue.push(MyRealtimeHandler{f, s});
 ```
 ]
 
-Lambdas in such cases require work-arounds, such as abandoning logical const
+Lambdas in such cases require workarounds, such as abandoning logical const
 correctness, abandoning ownership, or introducing intermediary
 {non-}const-propagating intermediary types. Strict ownership rules are important
 due the asynchronous nature of the handler, and const correctness is important
@@ -301,8 +301,8 @@ usefulness followed by a more detailed explanation for each of these items.
 
 Allow
 #link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3610.html")[
-lambda capture initialization] to be mutable qualified, as below. This
-would have the effect of declaring the captured variable to be mutable.
+lambda capture initialization] to be `mutable` qualified, as below. This
+would have the effect of declaring the captured variable to be `mutable`.
 
 ```cpp
 auto a = [mutable x, y]() {};
@@ -323,7 +323,7 @@ struct A {
   [
 ```cpp
 struct A {
-  const State state;
+  State state;
   mutable Buffer buf;
   void operator()() const {
     // ...
@@ -485,7 +485,7 @@ move_only_function<void()> f =
 ```cpp
 // loss of ownership
 move_only_function<void()> f =
-  [s, buf = std::cref(b)]() mutable {
+  [s, b = std::cref(buf)]() mutable {
     // ...
   };
 ```
@@ -600,7 +600,7 @@ struct B {
 
 When capturing by value with `=`, the constness of the captured entities
 depends on the declaration of the captured entity and the presence of the
-mutable specifier. There is no way to express the intent of const capture
+`mutable` specifier. There is no way to express the intent of const capture
 for capture defaults.
 
 ```cpp
@@ -623,7 +623,7 @@ Similarly to "Const Default Capture", the constness of entities captured by
 reference depends on the declaration of the entity. `[const &]` as a
 capture-default expresses the read-only intent clearly. Applying `std::cref` or
 `std::as_const` to each captured entity represents a chance to miss a variable
-and lose the protection of `const`. The capture-all does not post this issue.
+and lose the protection of `const`. The capture-all does not pose this issue.
 This can also be used as a novel means of creating read-only code blocks.
 
 #table(
@@ -658,8 +658,8 @@ X a, b, c;
 
 == Feature 6: Explicitly Const Call Operator
 
-For symmetry with the call operator of bespoke types, declaring the lambda const
-should not be an error.
+For symmetry with the call operator of bespoke types, declaring the lambda
+`const` should not be an error.
 
 ```cpp
 auto c = [x]() const {};
@@ -674,18 +674,18 @@ struct C {
 
 == Feature 7: Const Capture by Value on Const Call Operator
 
-For symmetry and principle of least surprise, declaring a const capture of a
+For symmetry and principle of least surprise, declaring a const capture in a
 const lambda should not be an error.
 
 ```cpp
 auto c = [const x]() {};
 ```
 
-See "Const Capture by Value on Mutable Call Operator".
+See "Const Capture on Mutable Call Operator".
 
 == Feature 8: Mutable Capture on Mutable Call Operator
 
-For symmetry and principle of least surprise, declaring a mutable capture of a
+For symmetry and principle of least surprise, declaring a mutable capture in a
 mutable lambda should not be an error.
 
 ```cpp
