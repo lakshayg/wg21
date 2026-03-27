@@ -818,17 +818,6 @@ The implementation is available on
 #link("https://github.com/villevoutilainen/gcc/tree/lambda-p2034")[GitHub] and
 can be tested on #link("https://godbolt.org/z/9fcoYeMMf")[Compiler Explorer].
 
-= Thanks
-
-Thanks Patrick McMichael for suggesting the idea. Thanks to Nevin Liber,
-Matt Calabrese for offering important corrections. Thanks to Nevin Liber,
-Davis Herring, Barry Revzin, and Victoria Tsai, for examples and suggestions.
-Thanks to Ville for the exploratory implementation! Thanks to Lakshay Garg for
-becoming the second author. Thanks to Daveed Vandevoorde for providing
-suggestions and feedback on the wording.
-
-#pagebreak()
-
 = Proposed Wording
 
 The proposed changes are based on
@@ -1076,3 +1065,11 @@ transformed as follows:
 ]
 ]
 
+= Thanks
+
+Thanks Patrick McMichael for suggesting the idea. Thanks to Nevin Liber,
+Matt Calabrese for offering important corrections. Thanks to Nevin Liber,
+Davis Herring, Barry Revzin, and Victoria Tsai, for examples and suggestions.
+Thanks to Ville for the exploratory implementation! Thanks to Lakshay Garg for
+becoming the second author. Thanks to Daveed Vandevoorde for providing
+suggestions and feedback on the wording.
