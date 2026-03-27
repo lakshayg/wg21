@@ -1,60 +1,106 @@
 // Document formatting rules
-#let font-serif = "New Computer Modern"
-#let font-sans  = "Helvetica"
-#let font-mono  = "Monaco"
+#let font-serif = "NotoSerif NFP"
+#let font-sans  = "NotoSans NFP"
+#let font-mono  = "NotoMono NFP"
+#let font-size  = 10pt
 
-#set heading(numbering: none)
-#show heading: set block(below: 1.2em)
+#let link-blue = rgb("#0000EE")
+#let diff-green = rgb("#BAECBF")
+#let diff-red = rgb("#F7D0CC")
+#let quote-gray = rgb("#D1D9E0")
+#let quote-stroke = 0.25em
 
-#set text(size: 10pt, font: font-serif, hyphenate: false)
-#set par(justify: true)
 #set page("us-letter", margin: 0.75in)
+#set heading(numbering: none)
+#set par(justify: true)
+#set text(
+    size: font-size,
+    font: font-serif,
+    hyphenate: false
+)
 
-#set raw(lang: "txt")
-#show raw: set text(font: font-mono)
+#set list(marker: [--])
+#show list: set block(above: 1.2em, below: 1.2em)
 
-#show link: set text(fill: rgb("#0000EE"))
-#show link: underline
+#show raw: set text(size: font-size, font: font-mono)
+#show raw.where(block: true): it => block(breakable: false, it)
+
+#show link: it => underline(stroke: link-blue, text(fill: link-blue, it))
 
 #set quote(block: true)
-#show quote: set pad(x: 2em)
-#show quote: set block(above: 1em)
+#show quote: it => block(
+    above: 1em,
+    outset: (left: -quote-stroke, right: 0pt),
+    inset: (left: 1em, y: 0.8em),
+    stroke: (
+        left: (
+            thickness: quote-stroke,
+            paint: quote-gray,
+            cap: "round"
+        )
+    ),
+    it
+)
 
 // prevent linebreak in the middle of grammar terms
 #show emph: it => box(it)
 
+#set sub(baseline: 0em) // hacky!
 #set highlight(top-edge: 8.5pt, bottom-edge: -2pt)
 #set underline(stroke: (paint: black, thickness: 0.5pt), offset: 1.5pt)
 #set strike(stroke: (paint: black, thickness: 0.5pt), offset: -2.5pt)
 
-#set list(marker: [--])
-
-// Custom styles
-#let tab = h(2em)
-#let ins(body) = highlight(fill: rgb("#90EE90"), underline(body))
-#let del(body) = highlight(fill: rgb("#FFC0CB"), strike(body))
+#let ins(body) = highlight(fill: diff-green, underline(body))
+#let del(body) = highlight(fill: diff-red, strike(body))
 #let replace(before, after) = del(before) + ins(after)
 #let nobreak(body) = block(breakable: false, body)
-#let grammar(body) = text(font: font-sans, size: 9.5pt, weight: "light", style: "italic", body)
+#let eelis(section, ..p) = {
+    let url = "https://eel.is/c++draft/" + section
+    let txt = "[" + section + "]"
+    if p.pos().len() > 0 {
+        let pp = p.pos().map(str).join(".")
+        url += "#" + pp
+        txt += " paragraph " + pp
+    }
+    link(url, txt)
+}
+#let grammar(body) = par(
+    justify: false,
+    hanging-indent: 2em,
+    text(font: font-sans, style: "oblique", body)
+)
 
-// Document
-#title[P2034: Partially Mutable Lambda Captures]
+#set document(
+    title: "Partially Mutable Lambda Captures",
+    author: ("Ryan McDougall", "Lakshay Garg"),
+    keywords: ("C++29", "lambda", "capture", "mutable", "const")
+)
+#title()
 #table(
-    columns: (6em, 1fr),
-    inset: (left: 0em, top: 0.2em),
+    columns: 2,
+    inset: (left: 0%, y: 4pt),
     stroke: none,
-    "Document", "P2034R7",
-    "Authors",  [Ryan McDougall ```txt <mcdougall.ryan@gmail.com>```],
-    "",         [Lakshay Garg ```txt <lakshayg.xyz@gmail.com>```],
+    "Document", link("https://wg21.link/P2034")[P2034R7],
+    "Date",     datetime.today().display(),
     "Audience", "EWG",
     "Project",  [ISO/IEC JTC1/SC22/WG21 14882: Programming Language -- C++],
+
+    table.cell(rowspan:2)[Authors],
+    [Ryan McDougall `<mcdougall.ryan@gmail.com>`],
+    [Lakshay Garg `<lakshayg.xyz@gmail.com>`],
+
+    "GitHub Issue", link("https://wg21.link/P2034/github"),
+    "Source", link("https://github.com/lakshayg/wg21/tree/main/p2034")
 )
 
 #outline(depth: 2)
 #pagebreak()
 
 // Table header highlight
-#set table(fill: (x, y) => if y == 0 { gray.lighten(40%) })
+#set table(
+    stroke: 0.5pt,
+    fill: (x, y) => if y == 0 { gray.lighten(40%) }
+)
 
 = Revision History
 
@@ -109,8 +155,6 @@
 
 == 2026-03 Croydon, R6
 
-#nobreak[
-
 P2034R6 should include default mutable captures: _Strong Consensus in favor_
 
 #table(
@@ -118,9 +162,6 @@ P2034R6 should include default mutable captures: _Strong Consensus in favor_
   [SF],[F],[N],[A],[SA],
   [3],[28],[4],[0],[0],
 )
-]
-
-#nobreak[
 
 P2034R6 should explore making const-capture equivalent to a const member:
 _Strong Consensus in favor_
@@ -130,9 +171,6 @@ _Strong Consensus in favor_
   [SF],[F],[N],[A],[SA],
   [8],[25],[1],[2],[0],
 )
-]
-
-#nobreak[
 
 Encourage more work in the direction of P2034R6: _Strong Consensus in favor_
 
@@ -141,11 +179,8 @@ Encourage more work in the direction of P2034R6: _Strong Consensus in favor_
   [SF],[F],[N],[A],[SA],
   [14],[26],[2],[0],[0],
 )
-]
 
 == 2025-11 Kona, R5
-
-#nobreak[
 
 We \[EWG\] encourage further work on this paper towards C++29:
 _Strong Consensus_
@@ -155,11 +190,9 @@ _Strong Consensus_
   [SF],[F],[N],[A],[SA],
   [21],[27],[5],[0],[0],
 )
-]
 
 == 2025-06 Sofia, R4
 
-#nobreak[
 EWG encourages more work in the direction of Partially Mutable Lambda Captures:
 _Consensus_
 
@@ -168,9 +201,7 @@ _Consensus_
   [SF],[F],[N],[A],[SA],
   [1],[10],[4],[2],[1],
 )
-]
 
-#nobreak[
 EWG encourages more work in the direction of Partially Mutable Lambda Captures,
 including extensions: _Stronger consensus_
 
@@ -179,11 +210,9 @@ including extensions: _Stronger consensus_
   [SF],[F],[N],[A],[SA],
   [2],[15],[3],[1],[0],
 )
-]
 
 == 2024-03 Tokyo, R2
 
-#nobreak[
 EWGI believes P2034R3 should include a `const` qualifier for lambda captures:
 _Barely consensus_ (Comment: motivation could be better)
 
@@ -192,9 +221,7 @@ _Barely consensus_ (Comment: motivation could be better)
   [SF],[F],[N],[A],[SA],
   [2],[4],[4],[1],[0],
 )
-]
 
-#nobreak[
 EWGI believes P2034R3 is sufficiently well developed, EWGI forwards it to EWG:
 _Consensus_
 
@@ -203,7 +230,6 @@ _Consensus_
   [SF],[F],[N],[A],[SA],
   [3],[7],[0],[0],[0],
 )
-]
 
 #pagebreak()
 
@@ -255,7 +281,6 @@ and place them in a concurrent queue to be processed elsewhere. Performance is
 often key in such systems, and such operations may want its own local reusable
 scratch memory. Or perhaps an accumulator for hysteresis over multiple calls.
 
-#nobreak[
 ```cpp
 struct MyRealtimeHandler {
   Callback callback_;
@@ -270,7 +295,6 @@ struct MyRealtimeHandler {
 concurrent::queue<move_only_function<void(Timestamp) const> queue;
 queue.push(MyRealtimeHandler{f, s});
 ```
-]
 
 Lambdas in such cases require workarounds, such as abandoning logical const
 correctness, abandoning ownership, or introducing intermediary
@@ -317,7 +341,7 @@ struct A {
 ```
 
 #table(
-  columns: (1fr, 1fr),
+  columns: (1.1fr, 1fr),
   align: bottom,
   [Before], [After],
   [
@@ -331,16 +355,15 @@ struct A {
 };
 
 // manual bespoke type
-move_only_function<void() const> f = A{s, b};
+move_only_function<void() const> f =
+  A{s, b};
 ```
   ],[
 ```cpp
 move_only_function<void() const> f =
-  [s, mutable b] {
-    // ...
-  };
+  [s, mutable b] { /* ... */ };
 ```
-  ],nobreak[
+  ],[
 ```cpp
 template <typename T>
 class as_owned_mutable {
@@ -362,6 +385,7 @@ move_only_function<void() const> f =
 ```cpp
 move_only_function<void() const> f =
   [s, mutable b] {
+
     // ...
   };
 ```
@@ -436,7 +460,7 @@ more verbose assignment syntax.
 Allowing `const` captures is ergonomic and simple.
 
 #table(
-  columns: (1fr, 1fr),
+  columns: (1.3fr, 1fr),
   align: bottom,
   [Before], [After],
   [
@@ -782,14 +806,12 @@ this form as well.
 Ville Voutilainen implemented the proposal along with the extensions proposed in
 P2034R5 in GCC with regression tests, and gave the following report.
 
-#block(stroke: (left: 2pt + gray))[
 #quote[
 In general, the implementation was very straightforward, after discussing the
 approach with the maintainer, and coming to the conclusion that it's simply a
 matter of adjusting the types of the capture members of lambda for const, and
 the storage-class-specifier for mutable. The implementation effort was a matter
 of a single afternoon.
-]
 ]
 
 The implementation is available on
@@ -813,10 +835,10 @@ The proposed changes are based on
 #link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5008.pdf")[
 N5008].
 
-== expr.prim.id.unqual
+== [expr.prim.id.unqual]
 
 #nobreak[
-=== Change in #underline[expr.prim.id.unqual] (7.5.5.2) paragraph 4
+=== Change #eelis("expr.prim.id.unqual", 4)
 #quote[
 If
 - the _unqualified-id_ appears in a _lambda-expression_ at program point P,
@@ -842,27 +864,24 @@ capture in the object parameter of the function call operator of _E_.][:
 ]
 
 \[_Note 3:_ If _E_ is not declared `mutable` #ins[and the entity is not captured
-mutably (expr.prim.lambda.capture) by _E_], the type of such an identifier will
-typically be `const` qualified. --- _end note_\]
+mutably (#eelis("expr.prim.lambda.capture")) by _E_], the type of such an
+identifier will typically be `const` qualified. --- _end note_\]
 ]
 ]
 
-== expr.prim.lambda.general
+== [expr.prim.lambda.general]
 
-#nobreak[
-=== Change in #underline[expr.prim.lambda.general] (7.5.6.1)
+=== Change #eelis("expr.prim.lambda.general")
 #quote[#grammar[
-lambda-specifier:  \ #tab
-	`consteval`      \ #tab
-	`constexpr`      \ #tab
-	#ins[`const`]    \ #tab
-	`mutable`        \ #tab
-	`static`
+lambda-specifier:      \
+    `consteval`        \
+    `constexpr`        \
+    #ins[`const`]      \
+    `mutable`          \
+    `static`
 ]]
-]
 
-#nobreak[
-=== Change in #underline[expr.prim.lambda.general] (7.5.6.1) paragraph 4
+=== Change #eelis("expr.prim.lambda.general", 4)
 #quote[
 A _lambda-specifier-seq_ shall contain at most one of each _lambda-specifier_
 and shall not contain both `constexpr` and `consteval`.
@@ -874,14 +893,13 @@ The _lambda-specifier-seq_ shall #del[not contain both `mutable` and `static`]
 If the _lambda-specifier-seq_ contains `static`, there shall be no
 _lambda-capture_.
 ]
-]
 
-== expr.prim.lambda.closure
+== [expr.prim.lambda.closure]
 
 #nobreak[
-=== Add a note to #underline[expr.prim.lambda.closure] (7.5.6.2) paragraph 7
+=== Add a note to #eelis("expr.prim.lambda.closure", 7)
 #quote[
-The function call operator or operator template is a static member function of
+The function call operator or operator template is a static member function or
 static member function template if the _lambda-expression_'s
 _parameter-declaration-clause_ is followed by `static`.
 Otherwise, it is a non-static member function or member function template that
@@ -906,46 +924,56 @@ _parameter-declaration-clause_ is followed by `consteval`.
 
 #ins[\[_Note_: The `const` _lambda-specifier_ has no additional effect; the
 function call operator is declared `const` if and only if `mutable` and `static`
-are not specified, regardless of whether `const` is present. _-- end note_\]]
+are not specified, regardless of whether `const` is present. --- _end note_\]]
 ]
 ]
 
-== expr.prim.lambda.capture
+== [expr.prim.lambda.capture]
+
+=== Change #eelis("expr.prim.lambda.capture")
+#quote[
+#grammar[
+lambda-capture:                      \
+    capture-default                  \
+    capture-list                     \
+    capture-default, capture-list
+]
+
+#grammar[
+capture-default:                     \
+    #ins[`const`#sub[opt]] &         \
+    \=
+]
+
+#grammar[
+capture-list:                        \
+    capture                          \
+   capture-list, capture
+]
+
+#grammar[
+capture:                             \
+    simple-capture                   \
+    init-capture
+]
+
+#grammar[
+simple-capture:                                         \
+    #ins[`mutable`#sub[opt]] identifier ...#sub[opt]    \
+    #ins[`const`#sub[opt]] & identifier ...#sub[opt]    \
+    this                                                \
+    \*this
+]
+
+#grammar[
+init-capture:                                                    \
+    #ins[`mutable`#sub[opt]] ...#sub[opt] identifier initializer \
+    #ins[`const`#sub[opt]] & ...#sub[opt] identifier initializer
+]
+]
 
 #nobreak[
-=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3)
-#quote[#grammar[
-lambda-capture:                    \ #tab
-	capture-default                \ #tab
-	capture-list                   \ #tab
-	capture-default, capture-list
-
-capture-default:                   \ #tab
-	#ins[`const`#sub[opt]] &   \ #tab
-	\=
-
-capture-list:                      \ #tab
-	capture                        \ #tab
-	capture-list, capture
-
-capture:                           \ #tab
-	simple-capture                 \ #tab
-	init-capture
-
-simple-capture:                            \ #tab
-	#ins[`mutable`#sub[opt]] identifier ...#sub[opt] \ #tab
-	#ins[`const`#sub[opt]] & identifier ...#sub[opt] \ #tab
-	this                                   \ #tab
-	\*this
-
-init-capture:                                           \ #tab
-	#ins[`mutable`#sub[opt]] ...#sub[opt] identifier initializer \ #tab
-	#ins[`const`#sub[opt]] & ...#sub[opt] identifier initializer
-]]
-]
-
-#nobreak[
-=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 2
+=== Change #eelis("expr.prim.lambda.capture", 2)
 #quote[
 If a _lambda-capture_ includes a _capture-default_ that is
 #replace[`&`][not `=`], no #del[identifier in a] _simple-capture_ of that
@@ -959,7 +987,7 @@ _simple-capture_ of that _lambda-capture_ shall be of the form
 ]
 
 #nobreak[
-=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 6
+=== Change #eelis("expr.prim.lambda.capture", 6)
 #quote[
 An _init-capture_ inhabits the lambda scope of the _lambda-expression_.
 An _init-capture_ without ellipsis behaves as if it declares and explicitly
@@ -976,7 +1004,7 @@ captures a variables of the form "`auto` _init-capture_ `;`"
 ]
 
 #nobreak[
-=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 10
+=== Change #eelis("expr.prim.lambda.capture", 10)
 #quote[
 An entity is _captured by copy_ if
 - it is implicitly captured, the _capture-default_ is `=`, and the captured
@@ -1008,7 +1036,7 @@ A member of an anonymous union shall not be captured by copy.
 ]
 
 #nobreak[
-=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 12
+=== Change #eelis("expr.prim.lambda.capture", 12)
 #quote[
 An entity is _captured by reference_ if it is implicitly or explicitly captured
 but not captured by copy.
@@ -1022,7 +1050,7 @@ If declared, such non-static data members shall be of literal type.
 ]
 
 #nobreak[
-=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 13
+=== Change #eelis("expr.prim.lambda.capture", 13)
 #quote[
 An _id-expression_ within the _compound-statement_ of a _lambda-expression_ that
 is an odr-use of a reference captured by reference refers to the entity to which
@@ -1033,7 +1061,7 @@ id-expression is const-qualified.]
 ]
 
 #nobreak[
-=== Change in #underline[expr.prim.lambda.capture] (7.5.6.3) paragraph 14
+=== Change #eelis("expr.prim.lambda.capture", 14)
 #quote[
 If a _lambda-expression_ `m2` captures an entity and that entity is captured by
 an immediately enclosing _lambda-expression_ `m1`, then `m2`'s capture is
@@ -1048,4 +1076,3 @@ transformed as follows:
 ]
 ]
 
-// vim:cc=81:tw=80
