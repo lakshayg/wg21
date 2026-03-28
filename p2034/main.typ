@@ -11,7 +11,7 @@
 #let quote-stroke = 0.25em
 
 #set page("us-letter", margin: 0.75in)
-#set heading(numbering: none)
+#set heading(numbering: "1.1 ")
 #set par(justify: true)
 #set text(
     size: font-size,
@@ -93,7 +93,7 @@
     "Source", link("https://github.com/lakshayg/wg21/tree/main/p2034")
 )
 
-#outline(depth: 2)
+#outline(/*depth: 2*/)
 #pagebreak()
 
 // Table header highlight
@@ -103,12 +103,40 @@
 )
 
 = Revision History
-
-=== Changes from R6: #link("https://wiki.isocpp.org/2026-03_Croydon:EvolutionWorkingGroup:P2034R6")[EWG Discussion]
+#set heading(numbering: none, outlined: false)
+== Changes from R6: #link("https://wiki.isocpp.org/2026-03_Croydon:EvolutionWorkingGroup:P2034R6")[EWG Discussion]
 
 - Fix code examples
+- TODO include mutable capture default
+- TODO add design section discussing member types
 
-=== Changes from R5: #link("https://wiki.isocpp.org/2025-11_Kona:EWGP2034Notes")[EWG Discussion]
+// Interested people:
+// - Ryan McDougall
+// - Ville Voutilainen
+// - Mattermost: xazax
+// - Mattermost: opensdh
+//
+// ---
+// opensdh:
+// It is to me really weird that this already doesn't work:
+// int f() {
+//   const int x = 0;
+//   auto g = [x]() mutable {return x++;};  // error: x is declared const
+//   return g() + g();  // surely 1
+// }
+//
+// I'd be happy with exploring this space if it meant that we could fix that someday.
+// 9:43 AM
+//
+// auto y = x; wouldn't do that, but lambdas do (even without &).
+// ---
+//
+// Design questions:
+// - What should be the type of entities captured by const value
+// - Can a lambda containing const members movable?
+// - A lot of the lambda behavior diverges
+
+== Changes from R5: #link("https://wiki.isocpp.org/2025-11_Kona:EWGP2034Notes")[EWG Discussion]
 
 - Incorporate extensions into the main proposal.
 - Add discussion of capture defaults to the proposal.
@@ -119,29 +147,29 @@
   - const-ref capture-default
   - const specifier
 
-=== Changes from R4: #link("https://wiki.isocpp.org/2025-06_Sofia:NotesEWGP2034")[EWG Discussion]
+== Changes from R4: #link("https://wiki.isocpp.org/2025-06_Sofia:NotesEWGP2034")[EWG Discussion]
 
 - Implementation experience.
 
-=== Changes from R3: #link("https://wiki.isocpp.org/2024-03_Tokyo:NotesEWGIP2034R2")[EWG-I Discussion]
+== Changes from R3: #link("https://wiki.isocpp.org/2024-03_Tokyo:NotesEWGIP2034R2")[EWG-I Discussion]
 
 - Meta-motivation: safety and security -- const should be easier to get right
   and harder to get wrong.
 - Cleaned up some examples.
 
-=== Changes from R2
+== Changes from R2
 
 - Update author email addresses.
 - Rename `any_invocable` to `move_only_function`.
 
-=== Changes from R1
+== Changes from R1
 
 - Add discussion of const captures on move construction and assignment.
 - Add vocabulary type `as_mutable`.
 - Add alternative implementation strategy for const members.
 - Selective move feature in top section.
 
-=== Changes from R0: #link("https://wiki.isocpp.org/2020-02_Prague:P2034R0SG17")[Concerns from EWG-I]
+== Changes from R0: #link("https://wiki.isocpp.org/2020-02_Prague:P2034R0SG17")[Concerns from EWG-I]
 
 - Interactions with `this` pointer.
 - Interactions with init-capture packs.
@@ -151,7 +179,9 @@
 
 #pagebreak()
 
+#set heading(numbering: "1.1 ", outlined: true)
 = Polls
+#set heading(numbering: none)
 
 == 2026-03 Croydon, R6
 
@@ -233,6 +263,7 @@ _Consensus_
 
 #pagebreak()
 
+#set heading(numbering: "1.1 ")
 = Background
 
 Lambdas were introduced in
@@ -309,36 +340,61 @@ const-correct lambdas. In addition to const-correctness, these features improve
 the consistency and symmetry -- which the authors believe is a justification in
 its own right.
 
-The proposed enhancements are summarized below in the order of their perceived
-usefulness followed by a more detailed explanation for each of these items.
+// The proposed enhancements are summarized below in the order of their perceived
+// usefulness followed by a more detailed explanation for each of these items.
+//
+// Existing symmetries in lambdas:
+// - each capture type has a corresponding capture default
+//
+// Unfortunate:
+// [x] is not the same as [x = x];
+//
+//
+// 2. Const capture
+//    - mainly important for mutable lambdas
+//    - to avoid surprising behavior, also allow for const lambdas
+//    - this is a by-copy capture and therefore NSDM will be generated just like regular copy captures
+//    - Choice
+//      - the NSDM will have a top-level const added to it, OR
+//        - What happens to move ctor and assignment?
+//        - Are there any concerns?
+//      - we need to treat this member as a const in operator()
+//        - could it be confusing?
+//    - also allow const capture-default for symmetry
+//
+// 3. Const capture by reference
+//    - also allow as a capture-default, for symmetry
+//    - does the standard require NSDM for reference captures?
+//      - do we need to mandate a NSDM for const reference capture?
+//      - if we don't mandate a NSDM,  the reference will need to be treated as const in operator()
+//
+// 4. Explicitly const call operator
+//    - For symmetry and principle of least surprise
 
-1. Mutable capture on const call operator
-2. Const capture on mutable call operator
-3. Const capture by reference
-4. Const default capture
-5. Const default capture by reference
-6. Explicitly const call operator
-7. Const capture on const call operator
-8. Mutable capture on mutable call operator
+== Mutable Capture
 
-== Feature 1: Mutable Capture on Const Call Operator
+We propose a new form of by-copy capture, called the mutable capture. Allow
+lambda captures to be `mutable` qualified, as shown below. The standard
+mandates that by-copy captures create a non-static data member (NSDM) in the
+closure type. A mutable capture, in addition to defining a NSDM, would have the
+effect of declaring it `mutable`.
 
-Allow
-#link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3610.html")[
-lambda capture initialization] to be `mutable` qualified, as below. This
-would have the effect of declaring the captured variable to be `mutable`.
+=== Syntax
 
-```cpp
-auto a = [mutable x, y]() {};
+#table(
+  columns: (auto, 1fr),
+  [Capture Syntax],[Description],
+  [```cpp [mutable x]() {}```],[creates a `mutable` NSDM in the closure type],
+  [```cpp [mutable x...]() {}```],[],
+  [```cpp [mutable x = init]() {}```],[mutable init capture],
+  [```cpp [mutable ...xs = init]() {}```],[],
+  [```cpp [mutable]() {}```],[mutable implicit capture, analogous to value implicit capture `[=]`]
+)
 
-// equivalent to
+=== Value
 
-struct A {
-  mutable X x;
-  Y y;
-  void operator()() const {}
-};
-```
+The table below shows code that can be written in the language today
+and how it would benefit from the addition of this feature.
 
 #table(
   columns: (1.1fr, 1fr),
@@ -422,40 +478,162 @@ move_only_function<void() const> f =
   ]
 )
 
-=== Selective Moves with init-capture Packs
+// === Selective Moves with init-capture Packs
+//
+// Following the direction set out in
+// #link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2095r0.html")[
+// P2095], using the example in
+// #link("http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0780r2.html")[
+// P0780], we are able to move arguments from caller, to lambda, to callee --
+// without
+// having to stop at the lambda:
+//
+// ```cpp
+// template <class... Args>
+// auto delay_invoke_foo(Args... args, State s) {
+//   return [s, mutable ...args=std::move(args)] {  // <-- new
+//     return foo(s, std::move(args)...);           // <-- improved
+//   };
+// }
+// ```
 
-Following the direction set out in
-#link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2095r0.html")[
-P2095], using the example in
-#link("http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0780r2.html")[
-P0780], we are able to move arguments from caller, to lambda, to callee --
-without
-having to stop at the lambda:
+=== Design Considerations
+
+==== Applicability to mutable lambdas
+
+We propose that mutable captures be allowed even for mutable lambdas. Even though
+this would not have any effect on the functionality of the lambda, it improves the
+symmetry of the language and avoids causing surprise to the end user.
+
+==== Type of the non-static data member
+
+For by-copy captures, the standard requires that the closure type contain a corresponding
+non-static data member and defines rules for how the type of the NSDM is deduced.
+
+#eelis("expr.prim.lambda.capture", 6)
+#quote[
+[...] behaves as if it declares and explicitly captures
+a variable of the form "`auto` _init-capture_ `;`", [...]
+]
+
+#eelis("expr.prim.lambda.capture", 10)
+#quote[
+For each entity captured by copy, an unnamed non-static data member is declared
+in the closure type. [...]. The
+type of such a data member is the referenced type if the entity is a reference
+to an object, an lvalue reference to the referenced function type if the entity
+is a reference to a function, or the type of the corresponding captured entity
+otherwise. [...]
+]
+
+Following these rules for mutable captures can lead to invalid constructs when
+the captured entity is:
+
+- a `const` qualified object: ```cpp mutable const T obj;```
+- a reference to a `const` qualified object: ```cpp mutable const T obj;```
+
+It would be possible to create such scenarios easily in template code or during
+refactors. To avoid surprises, we modify the NSDM type rules to remove to:
+
+- remove any top level const from the type inferred by old rules, and
+- ignore the `mutable` nature of the capture when the entity is a function reference.
+
+The new behavior when capturing a cv-qualified object, although intuitive,
+deviates from what the standard prescribes for by-copy when using the
+simple-capture form, i.e. the cv-qualifiers are not preserved. It is unclear if
+this deviation is problematic. If it is, we could consider it an error and the
+user can fall back to the init-capture form which uses `auto` rules for type
+deduction.
+
+// #table(
+//   columns: 2,
+//   [],[],
+// [
+// ```cpp
+// const T x;
+// auto outer = [x] () {
+//   auto inner = [x] () mutable {
+//     // x is const
+//   };
+// };
+// ```
+// ],[],
+// [
+// ```cpp
+// const T x;
+// auto outer = [mutable x] () {
+//   auto inner = [x] () mutable {
+//     // x is non-const
+//   };
+// };
+// ```
+// ],[]
+// )
+//
+==== Mutable capture of reference types
+
+We explicitly disallow capture of the form ```cpp [mutable &x]```. This is
+because `mutable` references are not permitted by the language. Note that
+this is not the same as mutable capture of a reference type:
 
 ```cpp
-template <class... Args>
-auto delay_invoke_foo(Args... args, State s) {
-  return [s, mutable ...args=std::move(args)] {  // <-- new
-    return foo(s, std::move(args)...);           // <-- improved
-  };
-}
+T& x = ...;
+auto f = [mutable x]() { }; // closure type gets a `mutable T x;` member
 ```
 
-== Feature 2: Const Capture on Mutable Call Operator
+==== Implicit capture of `this` with `mutable` _capture-default_
 
-If lambda capture initialization can be modified by `mutable` and lambda
-closure call can be modified by `mutable`, then lambda closure calls modified by
-`mutable` should be able to declare some of their captures `const` -- an
-inversion of this paper's core proposal.
+C++20 deprecated the implicit reference capture of `*this` when using `=` as the
+capture default. Keeping in line with this direction, we propose that `*this`
+not be captured implicitly when `mutable` is used as the capture default.
+
+```cpp
+struct Foo {
+  int x;
+  void func() {
+    auto lambda1 = [=] () {
+      return x;   // deprecated, but compiles
+    };
+    auto lambda2 = [mutable] () {
+      return x;   // fails to compile, *this is not captured implicitly
+    };
+  }
+};
+```
+
+==== Interaction with `consteval` and `constexpr` lambdas
+
+The standard (#eelis("expr.const", 8, 8)) excludes `mutable` members from being
+used in constant expressions. Keeping in line with this behavior, we disallow
+mutable captures in `constexpr` and `consteval` lambdas.
+
+== Const Capture
+
+If lambda captures can be modified by `mutable` and lambda closure call can be
+modified by `mutable`, then lambda closure calls modified by `mutable` should
+be able to declare some of their captures `const` -- an inversion of this
+paper's core proposal.
+
+=== Syntax
+
+#table(
+  columns: (auto, 1fr),
+  [Capture Syntax],[Description],
+  [```cpp [const x]() mutable {}```],[],
+  [```cpp [const x...]() mutable {}```],[],
+  [```cpp [const x = init]() mutable {}```],[],
+  [```cpp [const ...xs = init]() mutable {}```],[],
+  [```cpp [const]() mutable {}```],[]
+)
 
 === Value
 
-If most of the values captured are mutable, but one should be `const`, then this
-variation would be shorter and more readable. The alternative is to simply leave
-otherwise const captures mutable, or to use `std::cref`. The former is
-less safe, and the latter may be undesirable because the lambda does not own the
-object referred to, which may create lifetime issues. Moreover it requires a
-more verbose assignment syntax.
+If most of the values captured are modifiable, but one should be `const`, then
+this variation would be shorter and more readable. The alternative is to simply
+leave otherwise const captures modifiable, or to use `std::cref`. The former is
+less safe, and the latter may be undesirable because the lambda does not own
+the object referred to, which may create lifetime issues. Moreover it requires
+a more verbose assignment syntax.
 
 Allowing `const` captures is ergonomic and simple.
 
@@ -523,49 +701,31 @@ move_only_function<void()> f =
   ],
 )
 
-=== Implementation
+=== Design Considerations
 
-```cpp
-auto b = [x, const y]() mutable {};
+==== Applicability to const lambdas
 
-// equivalent to:
+==== Type of the non-static data member
 
-struct B {
-  X x;
-  const Y y;
-  void operator()() {}
-};
-```
+similar to mutable rules
 
-A `const` member would make the lambda closure assignment operators deleted, but
-lambda closures with captures
-#link("https://eel.is/c++draft/expr.prim.lambda.closure#17")[already delete the
-copy assignment operator].
+==== Const capture of reference types
 
-A `const` member would also cause the move constructor to be implemented via
-copy, potentially causing it non-noexcept, depending on the copy constructor of
-the const member.
+Should we mandate creating a const ref member?
+Otherwise nested lambdas will need to figure out some way to do things correctly
 
-We can avoid these problems with another implementation strategy by invoking
-"as-if":
+==== Implicit capture of `this` with const _capture-default_
 
-```cpp
-// equivalent to:
+Not allowerd
 
-struct B {
-  X x;
-  Y y;
-  void operator()() {
-    // as-if y was declared const
-  }
-};
-```
 
-== Feature 3: Const Capture by Reference
+== Const Capture by Reference
 
 Capture by reference is not implicitly `const`, as capture by value is. However
 there are situations where it would be useful to capture by `const` reference,
 such as when a read-only object is too large to copy.
+
+=== Syntax
 
 === Value
 
@@ -592,150 +752,158 @@ move_only_function<void()> f =
   ]
 )
 
-=== Implementation
+=== Design Considerations
 
-```cpp
-auto b = [&x, const &y]() {};
 
-// equivalent to:
+== Explicitly const Call Operator
 
-struct B {
-  X &x;
-  const Y &y;
-  void operator()() const {}
-};
-```
-
-We could also invoke compiler magic using "as-if"
-
-```cpp
-// equivalent to:
-
-struct B {
-  X &x;
-  Y &y;
-  void operator()() {
-    // as-if y was declared const Y&
-  }
-};
-```
-
-== Feature 4: Const Default Capture
-
-When capturing by value with `=`, the constness of the captured entities
-depends on the declaration of the captured entity and the presence of the
-`mutable` specifier. There is no way to express the intent of const capture
-for capture defaults.
-
-```cpp
-int x = 42;
-auto b = [const =] () {
-    // x is captured as-if it was const
-    x = 1; // error
-}
-```
+=== Syntax
 
 === Value
 
-Declaring `[const =]` makes the read-only intent clear even on a mutable lambda,
-without requiring each capture to be individually annotated const. It is the
-default-capture analogue of "Const Capture on Mutable Call Operator".
-
-== Feature 5: Const Default Capture by Reference
-
-Similarly to "Const Default Capture", the constness of entities captured by
-reference depends on the declaration of the entity. `[const &]` as a
-capture-default expresses the read-only intent clearly. Applying `std::cref` or
-`std::as_const` to each captured entity represents a chance to miss a variable
-and lose the protection of `const`. The capture-all does not pose this issue.
-This can also be used as a novel means of creating read-only code blocks.
-
-#table(
-  columns: (1fr, 1fr),
-  [Before], [After],
-  [
-```cpp
-X a, b, c;
-...
-{
-  // manual wrapping
-  auto& c_a = std::as_const(a);
-  auto& c_b = std::as_const(b);
-  auto& c_c = std::as_const(c);
-  // ... enter const context
-}
-```
-  ],[
-```cpp
-X a, b, c;
-...
-[const &] {
+=== Design Considerations
 
 
-  // ... const context
+// = Benefits of Consistency and Symmetry
+//
+// The core benefits of features 6, 7, and 8 is lower cognitive load for
+// programmers learning C++, and principle of least surprise. We can teach why
+// lambdas default the way they do, but lambdas should have consistent and
+// symmetric vocabulary for teaching how lambdas transform into callable types
+// under the hood.
+//
+// Experienced users will also benefit from additional self-documentation,
+// especially in critical reliability contexts where verbosity and redundancy are
+// preferred. Users would declare the lambda `mutable` or `const` according to
+// ideal or majority semantics, and some minority of capture initialization would
+// be the opposite, as an exception.
 
-
-}();
-```
-  ]
-)
-
-== Feature 6: Explicitly Const Call Operator
-
-For symmetry with the call operator of bespoke types, declaring the lambda
-`const` should not be an error.
-
-```cpp
-auto c = [x]() const {};
-
-// equivalent to:
-
-struct C {
-  X x;
-  void operator()() const {}
-};
-```
-
-== Feature 7: Const Capture by Value on Const Call Operator
-
-For symmetry and principle of least surprise, declaring a const capture in a
-const lambda should not be an error.
-
-```cpp
-auto c = [const x]() {};
-```
-
-See "Const Capture on Mutable Call Operator".
-
-== Feature 8: Mutable Capture on Mutable Call Operator
-
-For symmetry and principle of least surprise, declaring a mutable capture in a
-mutable lambda should not be an error.
-
-```cpp
-auto c = [mutable x]() mutable {};
-
-// equivalent to:
-
-struct C {
-  mutable X x;
-  void operator()() {}
-};
-```
-
-== Benefits of Consistency and Symmetry
-
-The core benefits of features 6, 7, and 8 is lower cognitive load for
-programmers learning C++, and principle of least surprise. We can teach why
-lambdas default the way they do, but lambdas should have consistent and
-symmetric vocabulary for teaching how lambdas transform into callable types
-under the hood.
-
-Experienced users will also benefit from additional self-documentation,
-especially in critical reliability contexts where verbosity and redundancy are
-preferred. Users would declare the lambda `mutable` or `const` according to
-ideal or majority semantics, and some minority of capture initialization would
-be the opposite, as an exception.
+// = Design
+//
+// const specifier on lambda
+//
+// TODO Discuss behavior in:
+// - const lambdas
+// - mutable lambdas
+// - nested lambdas
+//
+// - object (consider cv-qualifiers)
+// - reference (consider whether referred type is const or not)
+// - function type
+//
+// - \*this
+// - const \*this
+//
+// - NSDMs are created for entities captured by copy - expr.prim.lambda.closure p10
+// - It is unspecified whether additional unnamed non-static data members are
+//   declared in the closure type for entities captured by reference. If declared,
+//   such non-static data members shall be of literal type. -
+//   expr.prim.lambda.closure p12
+//
+//
+// == Simple Capture or Implicit Capture by Copy
+//
+// - Non static data member is declared
+// - The type of the non-static data member is:
+//   - if the entity is an object, the type is the entity's type
+//   - if the entity is a reference, the type is the referenced type
+//   - if the entity is a function reference, the type is an lvalue reference to
+//     the referenced function
+//
+// For mutable captures, we extend these three cases as follows:
+//
+// - The type of the mutable non-static data member is
+//   - object: entity's type, with any top-level const removed
+//   - reference: the referred type with any top-level const removed
+//   - function reference: mutable is ignored
+//
+// - For const capture, we extend these three cases as follows:
+//   - object: const type
+//
+//
+// Unfortunate that simple capture preserves the cv qualifiers.
+// This was done to help with code migration.
+//
+// === should mutable capture be allowed for const entities?
+// Yes
+//
+// === should mutable capture be allowed for references?
+// Yes
+//
+// === should const capture produce a const NSDM or should it use the as-if rule?
+//
+// how does simple capture work for const objects? it creates a const NSDM
+//
+// benefits of the as-if rule: freedom of implementation.
+//
+// Are there any unexpected behaviors that might emerge from const captures being
+// implemented without a const member?
+//
+//
+// == Simple Capture or Implicit Capture by Reference
+//
+//
+// == Init Capture
+//
+// #nobreak(table(
+//   columns: 4, //(1fr, 1fr, 1fr, 1fr, 1fr),
+//   align: left,
+//
+//   table.cell(rowspan:2)[#align(bottom)[Capture Syntax]],
+//   table.cell(colspan:3)[#align(center)[What's being captured?]],
+//
+//   // [Capture Syntax],
+//   [Object],
+//   [Reference],
+//   [Function],
+//
+//   [```cpp [x]
+//   [=]```],
+//   [The closure type gets a NSDM of the same type as the captured entity],
+//   [The closure type gets a NSDM of the referenced type],
+//   table.cell(rowspan:3)[The closure type gets a NSDM that is an lvalue reference to the referenced function type],
+//
+//   [```cpp [mutable x]
+//   [mutable]```],
+//   [The closure type gets a `mutable` NSDM of the same type as the captured entity with any top-level `const` dropped],
+//   [`mutable` qualified NSDM of the referred type with any top-level `const` dropped],
+//   // [],
+//
+//   [```cpp [const x]
+//   [const]```],
+//   [type of NSDM is `const T`],
+//   [NSDM],
+//   // [],
+//
+//   [```cpp [&x]
+//   [&]```],[],[],[],
+//
+//   [```cpp [const &x]
+//   [const &]```],[],[],[],
+// ))
+//
+// #table(
+//   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+//   [Capture Type],[object],[reference],[function],[static object],
+//   [```cpp [x = init]```],[NSDM],[NSDM],[NSDM],[],
+//   [```cpp [mutable x = init]```],[NSDM],[NSDM],[NSDM],[],
+//   [```cpp [const x = init]```],[NSDM],[NSDM],[NSDM],[],
+//   [```cpp [&x = init]```],[],[],[],[],
+//   [```cpp [const &x = init]```],[],[],[],[],
+// )
+//
+// 1. mutable capture, mutable init-capture, mutable implicit capture, mutable
+//    capture of a function type, mutable capture of a reference type, mutable
+//    capture of a const object, mutable capture of a non-const object
+// 2. const capture, const init-capture, const implicit capture, const capture of a
+//    function type, const capture of a reference type, const capture of a const
+//    object, const capture of a non-const object
+// 3. const reference capture, const ref init-capture, const ref implicit capture,
+//    const ref capture of a function type, const ref capture of a non
+// 4. mutable implicit capture
+// 5. const implicit capture
+// 6. const& implicit capture
+// 7. explicitly const lambda
 
 = Concerns
 
@@ -819,6 +987,7 @@ The implementation is available on
 can be tested on #link("https://godbolt.org/z/9fcoYeMMf")[Compiler Explorer].
 
 = Proposed Wording
+#set heading(numbering: none)
 
 The proposed changes are based on
 #link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5008.pdf")[
@@ -1065,6 +1234,7 @@ transformed as follows:
 ]
 ]
 
+#set heading(numbering: "1.1 ")
 = Thanks
 
 Thanks Patrick McMichael for suggesting the idea. Thanks to Nevin Liber,
