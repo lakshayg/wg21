@@ -107,6 +107,7 @@
 == Changes from R6: #link("https://wiki.isocpp.org/2026-03_Croydon:EvolutionWorkingGroup:P2034R6")[EWG Discussion]
 
 - Fix code examples
+- Changed the NSDM type for mutable captures
 - TODO include mutable capture default
 - TODO add design section discussing member types
 
@@ -526,24 +527,25 @@ is a reference to a function, or the type of the corresponding captured entity
 otherwise. [...]
 ]
 
-Following these rules for mutable captures can lead to invalid constructs when
-the captured entity is:
+Following these rules for mutable captures can lead to invalid constructs
+because, unfortunately, simple-captures retain the cv-qualifiers of the
+captured entity.
 
-- a `const` qualified object: ```cpp mutable const T obj;```
-- a reference to a `const` qualified object: ```cpp mutable const T obj;```
+- `const` qualified object -> ```cpp mutable const T obj;```
+- reference to a `const` qualified object -> ```cpp mutable const T obj;```
 
 It would be possible to create such scenarios easily in template code or during
-refactors. To avoid surprises, we modify the NSDM type rules to remove to:
+refactors. We have a few options here:
 
-- remove any top level const from the type inferred by old rules, and
-- ignore the `mutable` nature of the capture when the entity is a function reference.
+1. Disallow mutable simple-capture of cv-qualified objects and references to such objects, or
+2. Discard the top-level const qualifier from captured objects, or
+3. Use `auto` deduction rules like init-captures do
 
-The new behavior when capturing a cv-qualified object, although intuitive,
-deviates from what the standard prescribes for by-copy when using the
-simple-capture form, i.e. the cv-qualifiers are not preserved. It is unclear if
-this deviation is problematic. If it is, we could consider it an error and the
-user can fall back to the init-capture form which uses `auto` rules for type
-deduction.
+It is unclear if one of these is clearly the superior option but option 3 seems the
+most appropriate because it could be understood as: "the language uses decltype like
+rules unless the user explicitly specifies the kind of declaration they want". This
+will also be applicable to `const` captures. This will also avoid introducing another
+set of type deduction rules.
 
 // #table(
 //   columns: 2,
