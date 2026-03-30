@@ -507,7 +507,50 @@ We propose that mutable captures be allowed even for mutable lambdas. Even thoug
 this would not have any effect on the functionality of the lambda, it improves the
 symmetry of the language and avoids causing surprise to the end user.
 
-==== Type of the non-static data member
+Note that even though a mutable capture is redundant on a mutable lambda, the
+generated closure types are different. A mutable capture will introduce a mutable
+member where as a mutable specifier removes the const from the call operator.
+
+#table(
+    columns: (1fr, 1fr),
+    [Lambda],[Generated Closure Type],
+[
+```cpp
+[x] () mutable {};
+```
+],[
+```cpp
+struct X {
+    int x;
+    void operator() {};
+};
+```
+],[
+```cpp
+[mutable x] () {};
+```
+],[
+```cpp
+struct X {
+    mutable int x;
+    void operator() const {};
+};
+```
+],[
+```cpp
+[mutable x] mutable () {};
+```
+],[
+```cpp
+struct X {
+    mutable int x;
+    void operator() {};
+};
+```
+]
+)
+
+==== Type of the non-static data member <mutable-nsdm-type>
 
 For by-copy captures, the standard requires that the closure type contain a corresponding
 non-static data member and defines rules for how the type of the NSDM is deduced.
@@ -532,8 +575,8 @@ Following these rules for mutable captures can lead to invalid constructs
 because, unfortunately, simple-captures retain the cv-qualifiers of the
 captured entity.
 
-- `const` qualified object -> ```cpp mutable const T obj;```
-- reference to a `const` qualified object -> ```cpp mutable const T obj;```
+- `const` qualified object #sym.arrow.r ```cpp mutable const T obj;```
+- reference to a `const` qualified object #sym.arrow.r ```cpp mutable const T obj;```
 
 It would be possible to create such scenarios easily in template code or during
 refactors. We have a few options here:
