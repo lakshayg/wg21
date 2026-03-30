@@ -94,7 +94,7 @@
     "Source", link("https://github.com/lakshayg/wg21/tree/main/p2034")
 )
 
-#outline(/*depth: 2*/)
+#outline(depth: 2)
 #pagebreak()
 
 // Table header highlight
@@ -183,7 +183,7 @@
 
 #set heading(numbering: "1.1 ", outlined: true)
 = Polls
-#set heading(numbering: none)
+#set heading(numbering: none, outlined: false)
 
 == 2026-03 Croydon, R6
 
@@ -265,7 +265,7 @@ _Consensus_
 
 #pagebreak()
 
-#set heading(numbering: "1.1 ")
+#set heading(numbering: "1.1 ", outlined: true)
 = Background
 
 Lambdas were introduced in
