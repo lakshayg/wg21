@@ -24,6 +24,7 @@
 
 #show raw: set text(size: font-size, font: font-mono)
 #show raw.where(block: true): it => block(breakable: false, it)
+#show raw.where(block: false): it => box(it)
 
 #show link: it => underline(stroke: link-blue, text(fill: link-blue, it))
 
