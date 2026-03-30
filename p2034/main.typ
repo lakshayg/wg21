@@ -599,6 +599,9 @@ struct Foo {
     auto lambda2 = [mutable] () {
       return x;   // fails to compile, *this is not captured implicitly
     };
+    auto lambda3 = [mutable, this] () {
+      return x;   // *this is captured explicitly, good!
+    };
   }
 };
 ```
