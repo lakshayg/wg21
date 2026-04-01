@@ -268,14 +268,10 @@ _Consensus_
 #set heading(numbering: "1.1 ", outlined: true)
 = Background
 
-Lambdas were introduced in
-#link("http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2550.pdf")[
-N2550], and while
-#link("http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2529.pdf")[
-previous] drafts considered mutable capture by value, the original wording
+Lambdas were introduced in @N2550, and while previous drafts (@N2529)
+considered mutable capture by value, the original wording
 left captures entirely const.
-#link("http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2658.pdf")[
-N2658] salvaged mutable for _all_ captures by allowing the `mutable` keyword
+@N2658 salvaged mutable for _all_ captures by allowing the `mutable` keyword
 to modify the call.
 
 `move_only_function` was accepted into the C++23 standard, and a central
@@ -1035,12 +1031,21 @@ The implementation is available on
 #link("https://github.com/villevoutilainen/gcc/tree/lambda-p2034")[GitHub] and
 can be tested on #link("https://godbolt.org/z/9fcoYeMMf")[Compiler Explorer].
 
-= Proposed Wording
 #set heading(numbering: none)
 
-The proposed changes are based on
-#link("https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5008.pdf")[
-N5008].
+= Thanks
+
+Thanks Patrick McMichael for suggesting the idea. Thanks to Nevin Liber, Matt
+Calabrese for offering important corrections. Thanks to Nevin Liber, Davis
+Herring, Barry Revzin, and Victoria Tsai, for examples and suggestions. Thanks
+to Ville for the exploratory implementation! Thanks to Daveed Vandevoorde for
+providing suggestions and feedback on the wording.
+
+#pagebreak()
+
+= Proposed Wording
+
+The proposed changes are based on @N5008.
 
 == [expr.prim.id.unqual]
 
@@ -1283,12 +1288,6 @@ transformed as follows:
 ]
 ]
 
-#set heading(numbering: "1.1 ")
-= Thanks
+#pagebreak()
 
-Thanks Patrick McMichael for suggesting the idea. Thanks to Nevin Liber,
-Matt Calabrese for offering important corrections. Thanks to Nevin Liber,
-Davis Herring, Barry Revzin, and Victoria Tsai, for examples and suggestions.
-Thanks to Ville for the exploratory implementation! Thanks to Lakshay Garg for
-becoming the second author. Thanks to Daveed Vandevoorde for providing
-suggestions and feedback on the wording.
+#bibliography("references.bib", style: "references.csl")
