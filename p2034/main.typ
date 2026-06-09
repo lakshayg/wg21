@@ -93,7 +93,7 @@
   columns: 2,
   inset: (left: 0%, y: 4pt),
   stroke: none,
-  "Document", link("https://wg21.link/P2034")[P2034R7-draft],
+  "Document", link("https://wg21.link/P2034")[P2034R8],
   "Date", datetime.today().display(),
   "Audience", "EWG",
   "Project", [ISO/IEC JTC1/SC22/WG21 14882: Programming Language -- C++],
@@ -118,6 +118,13 @@
 #set heading(numbering: none, outlined: false)
 
 = Revision History
+
+== Changes from R7: #link("https://wiki.isocpp.org/2026-06_Brno:EvolutionWorkingGroup:P2034R6")[EWG Discussion]
+
+- TODO: Wording
+- TODO: Rebase on the latest draft standard
+- TODO: clang implementation
+- TODO: gcc implementation
 
 == Changes from R6: #link("https://wiki.isocpp.org/2026-03_Croydon:EvolutionWorkingGroup:P2034R6")[EWG Discussion]
 
@@ -174,6 +181,35 @@
 #pagebreak()
 
 = Polls
+
+== 2026-06 Brno, R7
+
+D2034R7 should be modified to also allow `[=mutable]`, `[&const]` and `[=const]`
+in addition to `[mutable=]`, `[const&]` and `[const=]`, with the same semantics
+respectively: _No consensus_
+
+#table(
+  columns: 5,
+  [SF], [F], [N], [A], [SA],
+  [1], [2], [6], [8], [2],
+)
+
+D2034R7 should be modified to replace `[mutable=]`, `[const&]` and `[const=]`
+with `[=mutable]`, `[&const]` and `[=const]` respectively: _No consensus_
+
+#table(
+  columns: 5,
+  [SF], [F], [N], [A], [SA],
+  [2], [0], [9], [7], [1],
+)
+
+Forward D2034R7 (as on the wiki) to CWG for inclusion in C++29: _Consensus_
+
+#table(
+  columns: 5,
+  [SF], [F], [N], [A], [SA],
+  [4], [13], [2], [1], [2],
+)
 
 == 2026-03 Croydon, R6
 
